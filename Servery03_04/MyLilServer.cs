@@ -56,19 +56,71 @@ namespace Servery03_04
             {
                 data = reader.ReadLine();
                 Commands command = GetCommand(data);
-                string back_message = ExecuteCommand(command);
-
+                string back_message = ExecuteCommand(command, data, client);
                 dataRecive = data + " prijato";
-                writer.WriteLine(dataRecive);
-                writer.Flush();
+                SendMessage(dataRecive, writer);
+                SendMessage(back_message, writer);
             }
-            writer.WriteLine("Byl jsi odpojen");
-            writer.Flush();
+            SendMessage("Odpojen",writer);
         }
 
-        private string ExecuteCommand(Commands command)
+        private string ExecuteCommand(Commands command, string data, TcpClient client)
         {
-            throw new NotImplementedException();
+            switch (command)
+            {
+                case Commands.date:
+                    return GetDate();
+                    break;
+                case Commands.help:
+                    return GetHelp();
+                    break;
+                case Commands.ipconfig:
+                    return GetIp(client);
+                    break;
+                case Commands.exit:
+                    return StopClient();
+                    break;
+                case Commands.wrongcommand:
+                    return ReturnWrongCmd(data);
+                    break;
+                case Commands.error:
+                    return SendError();
+                    break;
+                default: 
+                    return SendError();
+                    break;
+            }
+                
+        }
+
+        private string SendError()
+        {
+            return "Error happend on Server Side";
+        }
+
+        private string ReturnWrongCmd(string data)
+        {
+            return $"Unexcpected Command : {data}";
+        }
+
+        private string StopClient()
+        {
+            return "This command isnt working right now";
+        }
+
+        private string GetIp(TcpClient client)
+        {
+            return "no ip";
+        }
+
+        private string GetHelp()
+        {
+            return "Mozne commandy :  date, help, ipconfig, exit";
+        }
+
+        private string GetDate()
+        {
+            return DateTime.Now.ToString();
         }
 
         private Commands GetCommand(string? data)
@@ -89,7 +141,11 @@ namespace Servery03_04
 
         private bool LegitimateCommand(string data)
         {
-            throw new NotImplementedException();
+            foreach (var command in commands)
+            {
+                if (command.Equals(data)) return true;
+            }
+            return false;
         }
 
         private void SendMessage(string v, StreamWriter writer)
