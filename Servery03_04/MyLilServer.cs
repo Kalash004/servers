@@ -110,7 +110,7 @@ namespace Servery03_04
 
         private string GetIp(TcpClient client)
         {
-            return "no ip";
+            return "ip";
         }
 
         private string GetHelp()
