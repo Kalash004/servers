@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-
+            MyLilServer server = new MyLilServer(65525);
         }
     }
 }

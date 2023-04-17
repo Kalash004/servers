@@ -1,0 +1,15 @@
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\bin\Debug\net6.0\Servery03_04.exe
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\bin\Debug\net6.0\Servery03_04.deps.json
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\bin\Debug\net6.0\Servery03_04.runtimeconfig.json
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\bin\Debug\net6.0\Servery03_04.dll
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\bin\Debug\net6.0\Servery03_04.pdb
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.csproj.AssemblyReference.cache
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.GeneratedMSBuildEditorConfig.editorconfig
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.AssemblyInfoInputs.cache
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.AssemblyInfo.cs
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.csproj.CoreCompileInputs.cache
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.dll
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\refint\Servery03_04.dll
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.pdb
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\Servery03_04.genruntimeconfig.cache
+M:\csharp\Middle\servers03_04\Servery03_04\Servery03_04\obj\Debug\net6.0\ref\Servery03_04.dll
