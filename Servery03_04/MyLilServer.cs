@@ -1,36 +1,39 @@
-﻿using System;
+﻿using Servery03_04.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Servery03_04
 {
-    enum Commands
+    public enum Stats
     {
-        date,
-        help,
-        ipconfig,
-        exit,
-        wrongcommand,
-        error
+        LoggedIn,
+        FailedToLogIn,
+        CommandsExecuted
     }
-    internal class MyLilServer
+    public class MyLilServer
     {
+
         private TcpListener myServer;
         private bool isRunning;
-        private String[] commands = {
-            "date",
-            "help",
-            "ipconfig",
-            "exit"
+        private List<Thread> threads = new List<Thread>();
+        private List<Client> clients = new List<Client>();
+        private Dictionary<Stats, Log> statlogs = new Dictionary<Stats, Log>();
+        private Dictionary<string, ICommand> commands = new Dictionary<string, ICommand>()
+        {
+            {"uptime",new UpTimeCommand()}
         };
 
-        public MyLilServer(TcpListener myServer, bool isRunning)
+        public MyLilServer(int port)
         {
-            this.myServer = myServer;
-            this.isRunning = isRunning;
+            this.myServer = new TcpListener(System.Net.IPAddress.Any,port);
+            myServer.Start();
+            isRunning = true;
+            ServerLoop();
         }
 
         private void ServerLoop()
@@ -38,8 +41,11 @@ namespace Servery03_04
             Console.WriteLine("Server Started");
             while (isRunning)
             {
+                Console.WriteLine("Working");
                 TcpClient client = myServer.AcceptTcpClient();
-                ClientLoop(client);
+                Thread t = new Thread(() => ClientLoop(client));
+                t.Start();
+                threads.Add(t);
             }
         }
 
@@ -55,88 +61,13 @@ namespace Servery03_04
             while (clientConnect)
             {
                 data = reader.ReadLine();
-                Commands command = GetCommand(data);
-                string back_message = ExecuteCommand(command, data, client);
-                dataRecive = data + " prijato";
-                SendMessage(dataRecive, writer);
-                SendMessage(back_message, writer);
-            }
-            SendMessage("Odpojen",writer);
-        }
-
-        private string ExecuteCommand(Commands command, string data, TcpClient client)
-        {
-            switch (command)
-            {
-                case Commands.date:
-                    return GetDate();
-                    break;
-                case Commands.help:
-                    return GetHelp();
-                    break;
-                case Commands.ipconfig:
-                    return GetIp(client);
-                    break;
-                case Commands.exit:
-                    return StopClient();
-                    break;
-                case Commands.wrongcommand:
-                    return ReturnWrongCmd(data);
-                    break;
-                case Commands.error:
-                    return SendError();
-                    break;
-                default: 
-                    return SendError();
-                    break;
-            }
-                
-        }
-
-        private string SendError()
-        {
-            return "Error happend on Server Side";
-        }
-
-        private string ReturnWrongCmd(string data)
-        {
-            return $"Unexcpected Command : {data}";
-        }
-
-        private string StopClient()
-        {
-            return "This command isnt working right now";
-        }
-
-        private string GetIp(TcpClient client)
-        {
-            return "ip";
-        }
-
-        private string GetHelp()
-        {
-            return "Mozne commandy :  date, help, ipconfig, exit";
-        }
-
-        private string GetDate()
-        {
-            return DateTime.Now.ToString();
-        }
-
-        private Commands GetCommand(string? data)
-        {
-            data = data.ToLower();
-            if (!LegitimateCommand(data)) return Commands.wrongcommand;
-            Commands command = Commands.error;
-            for (int i = 0; i < commands.Length; i++)
-            {
-                if (data.Equals(commands[i]))
+                if (commands.ContainsKey(data))
                 {
-                    command = (Commands)i;
+                    string back_message = commands[data.ToLower()].Execute();
+                    SendMessage(back_message, writer);
                 }
             }
-            if (command == Commands.error) throw new Exception("Error on command");
-            return command;
+            SendMessage("Odpojen",writer);
         }
 
         private bool LegitimateCommand(string data)
