@@ -28,20 +28,24 @@ namespace Servery03_04
             string? currentPass = null;
             while (reader.Read())
             {
-                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "Nick"))
+                switch(reader.NodeType)
                 {
-                    currentNick = reader.Value;
-                }
-                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "Password"))
-                {
-                    currentPass = reader.Value;
+                    case XmlNodeType.Element:
+                        if (reader.Name.Equals("Nick"))
+                        {
+                            reader.Read();
+                            currentNick = reader.Value;
+                        }
+                        if (reader.Name.Equals("Password"))
+                        {
+                            reader.Read();
+                            currentPass = reader.Value;
+                        }
+                        break;
                 }
                 if (currentNick != null && currentPass != null)
                 {
-                    if (currentNick.Equals(client.Name) && currentPass.Equals(client.Pass))
-                    {
-                        return true;
-                    }
+                    if (currentNick.Equals(client.Name) && currentPass.Equals(client.Pass)) return true;
                 }
             }
             return false;

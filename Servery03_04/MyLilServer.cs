@@ -22,7 +22,7 @@ namespace Servery03_04
         private bool isRunning;
         private List<Thread> threads = new List<Thread>();
         private List<Client> clients = new List<Client>();
-        private Dictionary<Stats, Log> statlogs = new Dictionary<Stats, Log>();
+        private List<Log> statlogs = new List<Log>();
 
         public MyLilServer(int port)
         {
@@ -49,7 +49,8 @@ namespace Servery03_04
         {
             StreamReader reader = new StreamReader(client.GetStream(), Encoding.UTF8);
             StreamWriter writer = new StreamWriter(client.GetStream(), Encoding.UTF8);
-            if (!LogInWrap(writer,reader,client)) {
+            if (!LogInWrap(writer, reader, client))
+            {
                 return false;
             }
             Dictionary<string, ICommand> commands = new Dictionary<string, ICommand>()
@@ -85,26 +86,26 @@ namespace Servery03_04
         private bool LogInWrap(StreamWriter writer, StreamReader reader, TcpClient clientstcp)
         {
             int loginattempts;
-            for (loginattempts = 0; loginattempts<2; loginattempts++)
+            for (loginattempts = 0; loginattempts < 2; loginattempts++)
             {
                 if (LogIn(writer, reader, clientstcp)) return true;
-                SendMessage($"Wrong credentials, retry {loginattempts}/3",writer);
+                SendMessage($"Wrong credentials, retry {loginattempts + 1}/3", writer);
             }
-            SendMessage("Terminating connection, bad credentials",writer);
+            SendMessage("Terminating connection, bad credentials", writer);
             return false;
         }
 
         private bool LogIn(StreamWriter writer, StreamReader reader, TcpClient clientstcp)
         {
-            SendMessage("Please log in \nName \nPassword", writer);
+            SendMessage("Please log in\nName\nPassword", writer);
             string name = reader.ReadLine();
             string pass = reader.ReadLine();
             Client notVerifiedClient = new Client(name, pass, clientstcp);
             if (!LogInModule.Instance().LogIn(notVerifiedClient))
             {
-                statlogs.Add(Stats.LoggedIn, new Log(Stats.LoggedIn, notVerifiedClient));
                 return false;
             }
+            statlogs.Add(new Log(Stats.LoggedIn, notVerifiedClient));
             this.clients.Add(notVerifiedClient);
             return true;
         }

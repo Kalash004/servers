@@ -8,8 +8,8 @@ namespace Servery03_04.Commands
 {
     internal class CommandStats : ICommand
     {
-        private Dictionary<Stats, Log> logs;
-        public CommandStats(Dictionary<Stats, Log> logs)
+        private List<Log> logs;
+        public CommandStats(List<Log> logs)
         {
             this.logs = logs;
         }
