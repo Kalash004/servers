@@ -6,21 +6,14 @@ using System.Threading.Tasks;
 
 namespace Servery03_04.Commands
 {
-    internal class StatsCommand : ICommand
+    internal class CommandStats : ICommand
     {
         private Dictionary<Stats, Log> logs;
-        private static StatsCommand instance;
-        private StatsCommand() { }
-
-        public StatsCommand Instance(Dictionary<Stats,Log> logs)
+        public CommandStats(Dictionary<Stats, Log> logs)
         {
-            if (instance == null)
-            {
-                instance = new StatsCommand();
-            }
-            instance.logs = logs;
-            return instance;
+            this.logs = logs;
         }
+
         public string Execute()
         {
             string returner = "";

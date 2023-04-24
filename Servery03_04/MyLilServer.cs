@@ -23,14 +23,10 @@ namespace Servery03_04
         private List<Thread> threads = new List<Thread>();
         private List<Client> clients = new List<Client>();
         private Dictionary<Stats, Log> statlogs = new Dictionary<Stats, Log>();
-        private Dictionary<string, ICommand> commands = new Dictionary<string, ICommand>()
-        {
-            {"uptime",new UpTimeCommand()}
-        };
 
         public MyLilServer(int port)
         {
-            this.myServer = new TcpListener(System.Net.IPAddress.Any,port);
+            this.myServer = new TcpListener(System.Net.IPAddress.Any, port);
             myServer.Start();
             isRunning = true;
             ServerLoop();
@@ -49,15 +45,24 @@ namespace Servery03_04
             }
         }
 
-        private void ClientLoop(TcpClient client)
+        private bool ClientLoop(TcpClient client)
         {
             StreamReader reader = new StreamReader(client.GetStream(), Encoding.UTF8);
             StreamWriter writer = new StreamWriter(client.GetStream(), Encoding.UTF8);
+            if (!LogInWrap(writer,reader,client)) {
+                return false;
+            }
+            Dictionary<string, ICommand> commands = new Dictionary<string, ICommand>()
+            {
+                {"who",new CommandWho(clients)},
+                {"stats",new CommandStats(statlogs)},
+                {"uptime",new UpTimeCommand()}
+            };
+
             bool clientConnect = true;
             string? data = null;
             string? dataRecive = null;
 
-            SendMessage("You Joined The Server", writer);
             while (clientConnect)
             {
                 data = reader.ReadLine();
@@ -67,16 +72,8 @@ namespace Servery03_04
                     SendMessage(back_message, writer);
                 }
             }
-            SendMessage("Odpojen",writer);
-        }
-
-        private bool LegitimateCommand(string data)
-        {
-            foreach (var command in commands)
-            {
-                if (command.Equals(data)) return true;
-            }
-            return false;
+            SendMessage("Odpojen", writer);
+            return true;
         }
 
         private void SendMessage(string v, StreamWriter writer)
@@ -85,5 +82,31 @@ namespace Servery03_04
             writer.Flush();
         }
 
+        private bool LogInWrap(StreamWriter writer, StreamReader reader, TcpClient clientstcp)
+        {
+            int loginattempts;
+            for (loginattempts = 0; loginattempts<2; loginattempts++)
+            {
+                if (LogIn(writer, reader, clientstcp)) return true;
+                SendMessage($"Wrong credentials, retry {loginattempts}/3",writer);
+            }
+            SendMessage("Terminating connection, bad credentials",writer);
+            return false;
+        }
+
+        private bool LogIn(StreamWriter writer, StreamReader reader, TcpClient clientstcp)
+        {
+            SendMessage("Please log in \nName \nPassword", writer);
+            string name = reader.ReadLine();
+            string pass = reader.ReadLine();
+            Client notVerifiedClient = new Client(name, pass, clientstcp);
+            if (!LogInModule.Instance().LogIn(notVerifiedClient))
+            {
+                statlogs.Add(Stats.LoggedIn, new Log(Stats.LoggedIn, notVerifiedClient));
+                return false;
+            }
+            this.clients.Add(notVerifiedClient);
+            return true;
+        }
     }
 }

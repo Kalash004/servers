@@ -10,21 +10,10 @@ namespace Servery03_04.Commands
     internal class CommandWho : ICommand
     {
         private List<Client> clients;
-        private static CommandWho instance;
-        private CommandWho()
+        public CommandWho(List<Client> clients)
         {
+            this.clients = clients;
         }
-        
-        public static CommandWho Instance(List<Client> clients)
-        {
-            if (instance == null)
-            {
-                instance = new CommandWho();
-            }
-            instance.clients = clients;
-            return instance;
-        }
-
         public string Execute()
         {
             string returner = "";

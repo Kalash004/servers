@@ -1,12 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <Users>
 	<User>
-		<Nick>
-			TheOneAndOnly
-		</Nick>
-		<Password>
-			test
-		</Password>
+		<Nick>TheOneAndOnly</Nick>
+		<Password>test</Password>
 	</User>
 </Users>

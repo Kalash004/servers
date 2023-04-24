@@ -9,19 +9,36 @@ namespace Servery03_04
 {
     internal class LogInModule
     {
-        string PATH = "M:\\csharp\\Middle\\servers03_04\\Servery03_04\\Servery03_04\\Files\\UserBase.xml";
+        private static LogInModule? instance = null;
+        private string PATH = "M:\\csharp\\Middle\\servers03_04\\Servery03_04\\Servery03_04\\Files\\UserBase.xml";
+        private LogInModule() { }
+
+        public static LogInModule Instance()
+        {
+            if (instance == null)
+            {
+                instance = new LogInModule();
+            }
+            return instance;
+        }
         public bool LogIn(Client client)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(PATH);
-            XmlNodeList nodeList;
-            XmlNode root = doc.DocumentElement;
-            nodeList = root.SelectNodes("User");
-            foreach (XmlNode node in nodeList)
+            XmlReader reader = XmlReader.Create(PATH);
+            string? currentNick = null;
+            string? currentPass = null;
+            while (reader.Read())
             {
-                if (node.SelectSingleNode("Nick").InnerText.Equals(client.Name))
+                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "Nick"))
                 {
-                    if (node.SelectSingleNode("Password").InnerText.Equals(client.Pass))
+                    currentNick = reader.Value;
+                }
+                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "Password"))
+                {
+                    currentPass = reader.Value;
+                }
+                if (currentNick != null && currentPass != null)
+                {
+                    if (currentNick.Equals(client.Name) && currentPass.Equals(client.Pass))
                     {
                         return true;
                     }
